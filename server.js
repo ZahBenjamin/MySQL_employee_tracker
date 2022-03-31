@@ -1,17 +1,18 @@
-// TODO: modules
+// modules
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const Connection = require('mysql2/typings/mysql/lib/Connection');
 require('console.table')
 
-const db = mysql.createConnection({
+const db = mysql.createConnection(
+  {
   host: 'localhost',
   port: '3002',
   user: 'root',
   database: 'employee_db'
-},
-console.log('You have connected to the Employee db !');
+  },
+console.log('You have connected to the Employee db !')
 );
+
 
 db.connect(function (err) {
   if (err) throw err;
@@ -88,13 +89,13 @@ function viewAllRoles() {
   FROM employee
   JOIN role
     ON department.id = role.id`
-}
-
-db.query(query, (err, response) => {
-  if (err) throw err;
-  console.table(response);
-  firstPrompt();
-});
+    
+    db.query(query, (err, response) => {
+      if (err) throw err;
+      console.table(response);
+      firstPrompt();
+    });
+  }
 
 //view all employees, 
 function viewAllEmployees() {
@@ -122,7 +123,7 @@ function addDepartment() {
     }, (err, response) => {
       if (err) throw err;
       console.table(response);
-      
+
       firstPrompt();
   });
 });
@@ -189,7 +190,7 @@ function addedEmployeeRole(roleOptions){
         {
           type: "list",
           name: "roleId",
-          message: "What is the employee role?"
+          message: "What is the employee role?",
           choices: roleOptions
         }
       ]).then((response) => {
@@ -211,8 +212,8 @@ function addedEmployeeRole(roleOptions){
 
 
 //update an employee role
-function updateEmployeeRole() {
-  let query = 
-  ``
-  db.query()
-}
+// function updateEmployeeRole() {
+//   let query = 
+//   ``
+//   db.query()
+// }
