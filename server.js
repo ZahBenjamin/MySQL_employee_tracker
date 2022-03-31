@@ -2,7 +2,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const Connection = require('mysql2/typings/mysql/lib/Connection');
-require('console.table')length
+require('console.table')
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -17,6 +17,8 @@ db.connect(function (err) {
   if (err) throw err;
   firstPrompt();
 });
+
+
 
 function firstPrompt(){
   inquirer.prompt([
@@ -40,19 +42,19 @@ function firstPrompt(){
         viewAllDepartments();
         break;
       case 'View all roles':
-        viewAllRoles(); // TODO
+        viewAllRoles(); 
         break;
       case 'View all employees':
-        viewAllEmployees(); // TODO
+        viewAllEmployees(); 
         break;
       case 'Add a department':
-        addDepartment(); // TODO 
+        addDepartment(); 
         break;
       case 'Add a role':
-        addRole(); // TODO 
+        addRole();  
         break;
       case 'Add an employee':
-        addEmployee(); // TODO
+        addEmployee(); 
         break;
       case 'Update an employee role':
         updateEmployeeRole(); // TODO
@@ -66,18 +68,16 @@ function firstPrompt(){
 // When selected show department name and id
 function viewAllDepartments() {
   let query =
-  `SELECT
-    *
-   FROM department`
+  `SELECT * FROM department`
 
   db.query(query, (err, response) => {
     if (err) throw err;
+    console.table(response);
     firstPrompt();
   });
 }
+
 //view all roles
-// WHEN I choose to view all roles
-// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 function viewAllRoles() {
   let query = 
   `SELECT
@@ -90,35 +90,125 @@ function viewAllRoles() {
     ON department.id = role.id`
 }
 
+db.query(query, (err, response) => {
+  if (err) throw err;
+  console.table(response);
+  firstPrompt();
+});
 
 //view all employees, 
 function viewAllEmployees() {
   let query = 
-  ``
-  db.query()
+  `SELECT * FROM employee`
+
+  db.query(query, (err, response) => {
+    if (err) throw err;
+    console.table(response);
+    firstPrompt();
+  });
 }
+
 //add a department, 
 function addDepartment() {
-  let query = 
-  ``
-  db.query()
-}
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'departmentName',
+      message: 'What department would you like to add?'
+    }
+  ]).then((response) => {
+    dq.query("INSERT INTO department SET ?", {
+      name: response.departmentName,
+    }) // add error handling
+    firstPrompt();
+  });
+};
+
 //add a role, 
 function addRole() {
-  let query = 
-  ``
-  db.query()
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'title',
+      message: 'What role would you like to add?'
+    },
+    {
+      type: 'input',
+      name: 'salary',
+      message: 'What is the salary for the role?'
+    },
+    {
+      type: 'input',
+      name: 'departmentId',
+      message: 'What is the department of the role?'
+    },
+  ]).then((response) => {
+    dq.query("INSERT INTO role SET ?", {
+      title: response.title,
+      salary: response.salary,
+      department_id: response.departmentId,
+    }) // add error handling 
+    firstPrompt();
+  });
 }
+
 //add an employee,  
 function addEmployee() {
-  let query = 
-  ``
-  db.query()
+  var query =
+    `SELECT * FROM role`
+
+    connection.query(query, function (err, response) {
+      if (err) throw err;
+  
+      const roleOptions = res.map(({ id, title, salary }) => ({
+        value: id, title: `${title}`, salary: `${salary}`
+      }));
+  
+      console.table(response);
+  
+      newEmployeeRole(roleOptions);
+    });
 }
+
+function newEmployeeRole(roleOptions){
+  inquirer.prompt([
+        {
+          type: "input",
+          name: "first",
+          message: "What is their first name?"
+        },
+        {
+          type: "input",
+          name: "last",
+          message: "What is their last name?"
+        },
+        {
+          type: "list",
+          name: "roleId",
+          message: "What is the employee role?"
+          choices: roleOptions
+        }
+      ]).then((response) => {
+        console.log(response);
+
+        dq.query("INSERT INTO role SET ?", {
+          first_name: response.first,
+          last_name: response.last,
+          role_id: response.roleId,
+        }, 
+        (err, response) => {
+          if (err) throw err;
+          console.table(response);
+
+          firstPrompt();
+        });
+      });
+    }
+
+
 //update an employee role
 function updateEmployeeRole() {
   let query = 
   ``
   db.query()
 }
-
