@@ -119,10 +119,14 @@ function addDepartment() {
   ]).then((response) => {
     dq.query("INSERT INTO department SET ?", {
       name: response.departmentName,
-    }) // add error handling
-    firstPrompt();
+    }, (err, response) => {
+      if (err) throw err;
+      console.table(response);
+      
+      firstPrompt();
   });
-};
+});
+}
 
 //add a role, 
 function addRole() {
@@ -147,7 +151,7 @@ function addRole() {
       title: response.title,
       salary: response.salary,
       department_id: response.departmentId,
-    }) // add error handling 
+    }) 
     firstPrompt();
   });
 }
@@ -157,7 +161,7 @@ function addEmployee() {
   var query =
     `SELECT * FROM role`
 
-    connection.query(query, function (err, response) {
+    db.query(query, (err, response) => {
       if (err) throw err;
   
       const roleOptions = res.map(({ id, title, salary }) => ({
@@ -166,11 +170,11 @@ function addEmployee() {
   
       console.table(response);
   
-      newEmployeeRole(roleOptions);
+      addedEmployeeRole(roleOptions);
     });
 }
 
-function newEmployeeRole(roleOptions){
+function addedEmployeeRole(roleOptions){
   inquirer.prompt([
         {
           type: "input",
