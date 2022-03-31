@@ -1,21 +1,21 @@
 // modules
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-require('console.table')
+require('console.table');
 
 const db = mysql.createConnection(
   {
   host: 'localhost',
-  port: '3002',
+  port: 3001,
   user: 'root',
-  database: 'employee_db'
-  },
-console.log('You have connected to the Employee db !')
-);
+  database: 'employee_db',
+  });
+// console.log('You have connected to the Employee db !');
 
 
-db.connect(function (err) {
+db.connect((err) => {
   if (err) throw err;
+
   firstPrompt();
 });
 
