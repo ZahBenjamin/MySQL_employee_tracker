@@ -19,11 +19,11 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES 
 ("Immanuel", "Kant", 1, null),
 ("John", "Rawls", 1, 1),
-("St. Thomas", "Aquinas", 1, 1),
-("William", "Shakespear", 2, 1), 
+("St. Thomas", "Aquinas", 1, null),
+("William", "Shakespear", 2, null), 
 ("Claude", "McKay", 2, null),
-("John Stuart", "Mill", 2, 1),
+("John Stuart", "Mill", 2, null),
 ("Adam", "Smith", 3, null),
-("Karl", "Marx", 3, 1),
+("Karl", "Marx", 3, null),
 ("Ludwig", "Wittgenstein", 4, null),
-("Bertrand", "Russell", 4, 1);
+("Bertrand", "Russell", 4, null);

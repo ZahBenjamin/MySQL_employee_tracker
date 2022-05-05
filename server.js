@@ -1,27 +1,28 @@
 // modules
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const PORT = process.env.PORT || 3001;
 require('console.table');
 
 const db = mysql.createConnection(
   {
-  host: 'localhost',
-  port: 3001,
-  user: 'root',
-  database: 'employee_db',
+  host: '127.0.0.1',
+  user: "root",
+  database: "employee_db",
   });
 // console.log('You have connected to the Employee db !');
 
 
 db.connect((err) => {
-  if (err) throw err;
-
+  if (err){ 
+  console.log('There was a database err', err);
+  }
   firstPrompt();
 });
 
 
 
-function firstPrompt(){
+function firstPrompt() {
   inquirer.prompt([
     {
       type: 'list',
@@ -81,14 +82,7 @@ function viewAllDepartments() {
 //view all roles
 function viewAllRoles() {
   let query = 
-  `SELECT
-    role.title,
-    role.id
-    department.name
-    role.salary
-  FROM employee
-  JOIN role
-    ON department.id = role.id`
+  `SELECT * FROM role`
     
     db.query(query, (err, response) => {
       if (err) throw err;
@@ -118,7 +112,7 @@ function addDepartment() {
       message: 'What department would you like to add?'
     }
   ]).then((response) => {
-    dq.query("INSERT INTO department SET ?", {
+    db.query("INSERT INTO department SET ?", {
       name: response.departmentName,
     }, (err, response) => {
       if (err) throw err;
@@ -148,7 +142,7 @@ function addRole() {
       message: 'What is the department of the role?'
     },
   ]).then((response) => {
-    dq.query("INSERT INTO role SET ?", {
+    db.query("INSERT INTO role SET ?", {
       title: response.title,
       salary: response.salary,
       department_id: response.departmentId,
@@ -164,56 +158,60 @@ function addEmployee() {
 
     db.query(query, (err, response) => {
       if (err) throw err;
-  
-      const roleOptions = res.map(({ id, title, salary }) => ({
-        value: id, title: `${title}`, salary: `${salary}`
-      }));
-  
-      console.table(response);
-  
-      addedEmployeeRole(roleOptions);
-    });
-}
 
-function addedEmployeeRole(roleOptions){
-  inquirer.prompt([
+      inquirer
+      .prompt([
         {
           type: "input",
-          name: "first",
-          message: "What is their first name?"
+          message: "Enter the employee's first name",
+          name: "firstName",
         },
         {
           type: "input",
-          name: "last",
-          message: "What is their last name?"
+          message: "Enter the employee's last name",
+          name: "lastName",
         },
         {
-          type: "list",
-          name: "roleId",
-          message: "What is the employee role?",
-          choices: roleOptions
-        }
-      ]).then((response) => {
-        console.log(response);
-
-        dq.query("INSERT INTO role SET ?", {
-          first_name: response.first,
-          last_name: response.last,
-          role_id: response.roleId,
-        }, 
-        (err, response) => {
-          if (err) throw err;
-          console.table(response);
-
+          type: "rawlist",
+          name: "role_id",
+          choices: function () {
+            var choiceArr = [];
+            for (i = 0; i < response.length; i++) {
+              const choice = {
+                value: response[i].id,
+                name: response[i].title
+              }
+              choiceArr.push(choice);
+            }
+            return choiceArr;
+          },
+          message: "Select title",
+        },
+        {
+          name: "manager_id",
+          type: "number",
+          message: "Enter manager ID",
+          default: "1",
+        },
+      ])
+      .then(function (response) {
+        db.query("INSERT INTO employee SET ?", {
+          first_name: response.firstName,
+          last_name: response.lastName,
+          role_id: response.role_id,
+          manager_id: response.manager_id
+        }, (err, result) => {
+          if (err){
+            console.log(err);
+          };
           firstPrompt();
-        });
+        })
       });
-    }
+  });
+};
 
 
-//update an employee role
+
+// update an employee role
 // function updateEmployeeRole() {
-//   let query = 
-//   ``
-//   db.query()
-// }
+  
