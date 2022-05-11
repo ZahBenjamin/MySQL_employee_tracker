@@ -9,6 +9,7 @@ const db = mysql.createConnection(
   host: '127.0.0.1',
   user: "root",
   database: "employee_db",
+  password: "",
   });
 // console.log('You have connected to the Employee db !');
 
